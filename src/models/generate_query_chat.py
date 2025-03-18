@@ -72,11 +72,3 @@ class GenerateQuery:
             logger.error(f"[{self.function_name}] Error during query generation: {str(e)}")
             logger.error(f"[{self.function_name}] Stacktrace: {traceback.format_exc()}")
             raise Exception(f"Erro na geração da query: {str(e)}")
-
-generator = GenerateQuery()
-
-def generate_query(user_input: str) -> str:
-    """
-    Function wrapper for generator class.
-    """
-    return generator.generate_query(user_input)
