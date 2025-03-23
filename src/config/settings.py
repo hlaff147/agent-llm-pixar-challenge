@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 CSV_PATH = "data/pixar_films_db.csv"
 TABLE_NAME = "pixar_films"
@@ -7,6 +8,8 @@ TABLE_NAME = "pixar_films"
 # ------------------------------
 # Logging Settings
 # ------------------------------
+
+load_dotenv()
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -17,7 +20,7 @@ LOG_MAX_BYTES = int(os.getenv("LOG_MAX_BYTES", 5 * 1024 * 1024))  # 5 MB
 LOG_BACKUP_COUNT = int(os.getenv("LOG_BACKUP_COUNT", 3))
 
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = f"{os.getenv('OPENAI_API_KEY')}"
 OPENAI_MODEL = "gpt-3.5-turbo"
 TABLE_NAME = "pixar_films"
 TABLE_INFO = [
