@@ -137,7 +137,14 @@ PROCESSO DE ANÁLISE (siga cada passo):
 
 PROCESSO DE CORREÇÃO DE QUERY:
 
-Caso uma query previamente gerada ({previous_query}) resulte em erro ao ser executada, e o erro retornado seja: {error_response}, revise o raciocínio e ajuste a query para que ela seja válida e executável.
+Caso uma query previamente gerada ({previous_query}) resulte em erro ao ser executada, e o erro retornado seja: {error_response}, siga o seguinte processo para corrigir a query:
+   - Reanalise completamente a pergunta original ({user_input}) e determine os campos e operações corretas.
+   - Antes de gerar a query, obtenha a lista exata das colunas disponíveis na tabela e utilize apenas colunas existentes.
+   - Verifique se cada coluna mencionada na query anterior ({previous_query}) está no esquema da tabela.
+      - Se alguma coluna não existir, substitua-a pela coluna correta antes de gerar a query.
+   - Analise a mensagem de erro ({error_response}) para entender a causa do problema e evitar que ele se repita.
+   - Reconstrua uma nova query do zero, garantindo que todas as colunas, funções e filtros sejam válidos no PostgreSQL.
+   - Responda apenas com uma query válida.
    
 EXEMPLOS:
 
@@ -213,20 +220,37 @@ Input: "Liste os filmes do mais recente para mais antigo"
 Query: SELECT Title, Release_Year FROM pixar_films ORDER BY Release_Year DESC;
 Erro: Referenced column "Title" not found in FROM clause! Candidate bindings: "film", "run_time", "film_rating", "cinema_score", "box_office_other"
 Pensamento passo a passo:
-   - O usuário deseja listar os filmes do mais recente para o mais antigo.
-   - A query original utiliza a coluna "Title", mas o erro informa que essa coluna não existe na tabela. Os nomes de colunas disponíveis indicam que o campo correto para o título é "film".
-   - Assim, substituímos "Title" por "film" para corrigir o erro.
-   - Mantemos a ordenação em "Release_Year" de forma decrescente para atender ao requisito de ordenar do mais recente para o mais antigo.
-   - A query corrigida, portanto, passa a utilizar as colunas válidas "film" e "Release_Year" e a ordenação adequada.
+   - Identificação dos Componentes:
+      - A pergunta solicita a listagem de filmes ordenados do mais recente para o mais antigo.
+      - Isso implica a necessidade de duas colunas: Título do filme (para exibição) e Ano de lançamento (para ordenação).
+   - Validação dos Campos:
+      - A query gerada utilizou Title, mas o erro indica que essa coluna não existe na tabela.
+      - A query também utilizou Release_Year, mas não foi identificado no erro, então pode não existir ou ter um nome diferente.
+      - As colunas disponíveis na tabela incluem:
+         - "film" (provavelmente o título do filme).
+         - "release_date" (possível substituto para Release_Year).
+   - Correção dos Campos:
+      - Title deve ser substituído por film (que representa o nome do filme).
+      - Release_Year deve ser substituído por release_date, assumindo que a coluna armazena o ano de lançamento.
+      - Como release_date pode armazenar datas completas, é importante garantir a ordenação correta.
+   - Construção da Query Corrigida:
+      - Selecionar film (nome do filme).
+      - Ordenar por release_date em ordem decrescente (mais recente primeiro).
+      - Query SQL Corrigida:
+         SELECT film, release_date FROM pixar_films ORDER BY release_date DESC;
+   - Verificação Final:
+      - Todas as colunas existem na tabela e foram corretamente utilizadas.
+      - A ordenação está correta para listar os filmes do mais recente para o mais antigo.
+      - Não há erros de sintaxe ou referência a colunas inexistentes.
 Saída JSON esperada:
 {{{{ 
     "analysis": {{{{ 
-        "fields": ["film", "Release_Year"],
+        "fields": ["film", "release_date"],
         "operations": ["SELECT", "ORDER BY DESC"],
         "filters": [],
         "groupings": []
     }}}},
-    "sql_query": "SELECT film, Release_Year FROM pixar_films ORDER BY Release_Year DESC;"
+    "sql_query": "SELECT film, release_date FROM pixar_films ORDER BY release_date DESC;"
 }}}}
 
 FORMATO DA RESPOSTA:
@@ -242,7 +266,7 @@ Responda em JSON com o seguinte formato:
 }}}}
 
 Input do usuário: {user_input}
-Query anterior: {previous_query}
+Query com erro: {previous_query}
 Erro retornado: {error_response}
 
 Responda usando exatamente o formato JSON especificado acima, seguindo passo a passo o raciocínio.
