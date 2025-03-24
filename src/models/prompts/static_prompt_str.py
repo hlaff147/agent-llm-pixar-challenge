@@ -97,7 +97,7 @@ Query ou pergunta do usuário: {user_input}
 Responda usando exatamente o formato JSON especificado acima, seguindo a estrutura dos exemplos.
 """
 SQL_GENERATOR_TEMPLATE = """Você é um especialista em análise de dados e SQL, com profundo conhecimento em PostgreSQL. 
-Sua tarefa é gerar código SQL para análise de dados com base na pergunta do usuário, utilizando apenas a tabela 
+Sua tarefa é gerar ou corrigir código SQL para análise de dados com base na pergunta do usuário, utilizando apenas a tabela 
 descrita abaixo, que contém informações dos filmes da Pixar.
 
 ESQUEMA DA TABELA:
@@ -135,6 +135,10 @@ PROCESSO DE ANÁLISE (siga cada passo):
    - Otimize a query se possível.
    - Garanta que todas as condições foram atendidas.
 
+PROCESSO DE CORREÇÃO DE QUERY:
+
+Caso uma query previamente gerada ({previous_query}) resulte em erro ao ser executada, e o erro retornado seja: {error_response}, revise o raciocínio e ajuste a query para que ela seja válida e executável.
+   
 EXEMPLOS:
 
 Exemplo 1 - Consulta Válida:
@@ -204,6 +208,27 @@ Saída JSON esperada:
     "sql_query": ""
 }}}}
 
+Exemplo 4 - Correção de Query com Erro:
+Input: "Liste os filmes do mais recente para mais antigo"
+Query: SELECT Title, Release_Year FROM pixar_films ORDER BY Release_Year DESC;
+Erro: Referenced column "Title" not found in FROM clause! Candidate bindings: "film", "run_time", "film_rating", "cinema_score", "box_office_other"
+Pensamento passo a passo:
+   - O usuário deseja listar os filmes do mais recente para o mais antigo.
+   - A query original utiliza a coluna "Title", mas o erro informa que essa coluna não existe na tabela. Os nomes de colunas disponíveis indicam que o campo correto para o título é "film".
+   - Assim, substituímos "Title" por "film" para corrigir o erro.
+   - Mantemos a ordenação em "Release_Year" de forma decrescente para atender ao requisito de ordenar do mais recente para o mais antigo.
+   - A query corrigida, portanto, passa a utilizar as colunas válidas "film" e "Release_Year" e a ordenação adequada.
+Saída JSON esperada:
+{{{{ 
+    "analysis": {{{{ 
+        "fields": ["film", "Release_Year"],
+        "operations": ["SELECT", "ORDER BY DESC"],
+        "filters": [],
+        "groupings": []
+    }}}},
+    "sql_query": "SELECT film, Release_Year FROM pixar_films ORDER BY Release_Year DESC;"
+}}}}
+
 FORMATO DA RESPOSTA:
 Responda em JSON com o seguinte formato:
 {{{{ 
@@ -217,6 +242,8 @@ Responda em JSON com o seguinte formato:
 }}}}
 
 Input do usuário: {user_input}
+Query anterior: {previous_query}
+Erro retornado: {error_response}
 
 Responda usando exatamente o formato JSON especificado acima, seguindo passo a passo o raciocínio.
 """
