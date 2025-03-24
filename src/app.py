@@ -26,35 +26,52 @@ st.subheader("Interaja com seu dataset de forma intuitiva!")
 user_input = st.text_input("Digite sua pergunta:", placeholder="Exemplo: Qual a média de idade por UF?")
 
 if st.button("Executar"):
-    st.write("**Validando entrada...**")
-    validator = QueryValidator()
-    validation_result = validator.validate_user_input(user_input)
-    validation_result_dict = json.loads(validation_result)
+    retries = 0
+    success = False
+    query = ""
+    error_response = ""
+    while retries < 5 and not success:
+        st.write("**Validando entrada...**")
+        validator = QueryValidator()
+        validation_result = validator.validate_user_input(user_input)
+        validation_result_dict = json.loads(validation_result)
 
-    if not validation_result_dict["valido"]:
-        st.error(f"Entrada inválida: {validation_result_dict['racional']}")
-    else:
-        st.write("**Gerando query SQL...**")
-        generate_query_chat = generate_query_chat.GenerateQuery()
-        sql_response = generate_query_chat.generate_query(user_input)
-
-        # Altere o nome da tabela para o nome correto do dataset
-        st.code(f"Query SQL Gerada:\n{sql_response}", language="sql")
-
-
-        st.success("Query SQL validada com sucesso!")
-
-        st.write("**Executando query no DuckDB**")
-        executor = DuckDBQueryExecutor(df)
-        df_result = executor.execute_query(sql_response)
-
-        if isinstance(df_result, pd.DataFrame):
-            st.write("**Resultado da Query:**")
-            st.dataframe(df_result)
-
-            # st.write("**Gerando análise explicativa...**")
-            # analysis = analyse_response_query(df_result)
-            # st.write("**Resposta reformulada:**")
-            # st.write(analysis["analise"])
+        if not validation_result_dict["valido"]:
+            st.error(f"Entrada inválida: {validation_result_dict['racional']}")
+            retries = 5
         else:
-            st.error(f"Erro ao executar a query: {df_result}")
+            st.write("**Gerando query SQL...**")
+            query_generator = generate_query_chat.GenerateQuery()
+
+            if retries > 0:
+                sql_response = query_generator.generate_query(user_input, query, error_response)
+            else:
+                sql_response = query_generator.generate_query(user_input)
+
+            # Altere o nome da tabela para o nome correto do dataset
+            st.code(f"Query SQL Gerada:\n{sql_response}", language="sql")
+
+
+            st.success("Query SQL validada com sucesso!")
+
+            st.write("**Executando query no DuckDB**")
+            executor = DuckDBQueryExecutor(df)
+            df_result = executor.execute_query(sql_response)
+
+            if isinstance(df_result, pd.DataFrame):
+                st.write("**Resultado da Query:**")
+                st.dataframe(df_result)
+                success = True
+
+                # st.write("**Gerando análise explicativa...**")
+                # analysis = analyse_response_query(df_result)
+                # st.write("**Resposta reformulada:**")
+                # st.write(analysis["analise"])
+            else:
+                st.error(f"Erro ao executar a query: {df_result}")
+                query = sql_response
+                error_response = df_result
+                retries += 1
+                if retries < 5:
+                    st.write(f"**Tentando novamente...**")
+

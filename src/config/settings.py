@@ -1,4 +1,5 @@
 import os
+from dotenv import load_dotenv
 
 CSV_PATH = "data/pixar_films_db.csv"
 TABLE_NAME = "pixar_films"
@@ -7,6 +8,8 @@ TABLE_NAME = "pixar_films"
 # ------------------------------
 # Logging Settings
 # ------------------------------
+
+load_dotenv()
 
 LOG_FORMAT = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 
@@ -17,7 +20,7 @@ LOG_MAX_BYTES = int(os.getenv("LOG_MAX_BYTES", 5 * 1024 * 1024))  # 5 MB
 LOG_BACKUP_COUNT = int(os.getenv("LOG_BACKUP_COUNT", 3))
 
 
-OPENAI_API_KEY = ""
+OPENAI_API_KEY = f"{os.getenv('OPENAI_API_KEY')}"
 OPENAI_MODEL = "gpt-3.5-turbo"
 TABLE_NAME = "pixar_films"
 TABLE_INFO = [
@@ -27,9 +30,14 @@ TABLE_INFO = [
         "Exemplo": "Toy Story, Inside Out, Coco, Up, Finding Nemo"
     },
     {
-        "Nome": "Release_Year",
-        "Tipo do Dado": "INT",
-        "Exemplo": "1995, 2015, 2024"
+        "Nome": "film_rating",
+        "Tipo do Dado": "VARCHAR",
+        "Exemplo": "G, PG, PG-13, R"
+    },
+    {
+        "Nome": "cinema_score",
+        "Tipo do Dado": "VARCHAR",
+        "Exemplo": "A, A+, A-"
     },
     {
         "Nome": "Release_Date",
@@ -37,65 +45,60 @@ TABLE_INFO = [
         "Exemplo": "1995-11-22, 2015-06-19"
     },
     {
-        "Nome": "Director",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "John Lasseter, Pete Docter, Lee Unkrich"
-    },
-    {
-        "Nome": "Producer",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "Bonnie Arnold, Darla K. Anderson"
-    },
-    {
-        "Nome": "StoryWriters",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "Pete Docter, Andrew Stanton"
-    },
-    {
-        "Nome": "Screenwriters",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "Andrew Stanton, Dan Gerson"
-    },
-    {
-        "Nome": "Composer",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "Randy Newman, Michael Giacchino"
-    },
-    {
-        "Nome": "Budget",
-        "Tipo do Dado": "FLOAT",
-        "Exemplo": "30000000, 175000000"
-    },
-    {
-        "Nome": "BoxOffice",
-        "Tipo do Dado": "FLOAT",
-        "Exemplo": "373554033, 858373000, 1100000000"
-    },
-    {
-        "Nome": "CriticRating",
-        "Tipo do Dado": "FLOAT",
-        "Exemplo": "8.3, 8.1, 7.5"
-    },
-    {
-        "Nome": "OscarNominations",
+        "Nome": "run_time",
         "Tipo do Dado": "INT",
-        "Exemplo": "3, 2, 1"
+        "Exemplo": "81, 95, 100"
     },
     {
-        "Nome": "OscarWins",
+        "Nome": "budget",
         "Tipo do Dado": "INT",
-        "Exemplo": "1, 0, 2"
+        "Exemplo": "30000000, 20000000, 15000000"
     },
     {
-        "Nome": "Runtime",
+        "Nome": "box_office_us_canada",
         "Tipo do Dado": "INT",
-        "Exemplo": "81, 95, 100  # duração em minutos"
+        "Exemplo": "191796233, 356461711, 200821936"
     },
     {
-        "Nome": "Genre",
-        "Tipo do Dado": "VARCHAR",
-        "Exemplo": "Animation, Adventure, Comedy"
-    }
+        "Nome": "box_office_other",
+        "Tipo do Dado": "INT",
+        "Exemplo": "170162503, 501100000, 301000000"
+    },
+    {
+        "Nome": "box_office_worldwide",
+        "Tipo do Dado": "INT",
+        "Exemplo": "361958736, 857561711, 501821936"
+    },
+    {
+        "Nome": "rotten_tomatoes_score",
+        "Tipo do Dado": "INT",
+        "Exemplo": "100, 95, 90"
+    },
+    {
+        "Nome": "rotten_tomatoes_counts",
+        "Tipo do Dado": "INT",
+        "Exemplo": "100, 95, 90"
+    },
+    {
+        "Nome": "metacritic_score",
+        "Tipo do Dado": "INT",
+        "Exemplo": "100, 95, 90"
+    },
+    {
+        "Nome": "metacritic_counts",
+        "Tipo do Dado": "INT",
+        "Exemplo": "100, 95, 90"
+    },
+    {
+        "Nome": "imdb_score",
+        "Tipo do Dado": "FLOAT",
+        "Exemplo": "8.3, 7.9, 9.0"
+    },
+    {
+        "Nome": "imdb_counts",
+        "Tipo do Dado": "INT",
+        "Exemplo": "100, 95, 90"
+    },
 ]
 
 

@@ -28,7 +28,7 @@ class GenerateQuery:
         
         logger.info(f"[{self.function_name}] Generator initialized successfully")
 
-    def generate_query(self, user_input: str) -> str:
+    def generate_query(self, user_input: str, previous_query: str = "", error_response: str = "") -> str:
         """
         Generate SQL query from user input using Pixar films specific template.
         
@@ -48,7 +48,9 @@ class GenerateQuery:
             response = self.chain.invoke({
                 "db_schema": TABLE_INFO,
                 "table_name": TABLE_NAME,
-                "user_input": user_input
+                "user_input": user_input,
+                "previous_query": previous_query,
+                "error_response": error_response 
             })
             
             logger.debug(f"[{self.function_name}] Raw LLM response: {response}")
