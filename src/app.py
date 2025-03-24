@@ -31,12 +31,12 @@ if st.button("Executar"):
     success = False
     query = ""
     error_response = ""
-    while retries < 5 and not success:
-        st.write("**Validando entrada...**")
-        validator = QueryValidator()
-        validation_result = validator.validate_user_input(user_input)
-        validation_result_dict = json.loads(validation_result)
+    st.write("**Validando entrada...**")
+    validator = QueryValidator()
+    validation_result = validator.validate_user_input(user_input)
+    validation_result_dict = json.loads(validation_result)
 
+    while retries < 5 and not success:
         if not validation_result_dict["valido"]:
             st.error(f"Entrada inválida: {validation_result_dict['racional']}")
             retries = 5
