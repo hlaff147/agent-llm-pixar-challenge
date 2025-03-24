@@ -6,6 +6,7 @@ from config.settings import CSV_PATH, DATA_DIR
 from executors.duckdb_query_executor import DuckDBQueryExecutor
 from models import generate_query_chat
 from models.query_validator import QueryValidator
+from models.generate_insight_chat import GenerateInsight
 
 # Validate CSV file exists
 if not os.path.exists(CSV_PATH):
@@ -59,14 +60,15 @@ if st.button("Executar"):
             df_result = executor.execute_query(sql_response)
 
             if isinstance(df_result, pd.DataFrame):
-                st.write("**Resultado da Query:**")
-                st.dataframe(df_result)
-                success = True
+              st.write("**Resultado da Query:**")
+              st.dataframe(df_result)
+              success = True
 
-                # st.write("**Gerando análise explicativa...**")
-                # analysis = analyse_response_query(df_result)
-                # st.write("**Resposta reformulada:**")
-                # st.write(analysis["analise"])
+              st.write("**Gerando análise explicativa...**")
+              insight_generator = GenerateInsight()
+              analysis = insight_generator.generate_insight(user_input, sql_response, df_result.to_json())
+              st.write("**Resposta reformulada:**")
+              st.write(analysis)
             else:
                 st.error(f"Erro ao executar a query: {df_result}")
                 query = sql_response

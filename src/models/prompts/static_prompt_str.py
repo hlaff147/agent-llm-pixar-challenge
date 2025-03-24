@@ -273,67 +273,32 @@ Responda usando exatamente o formato JSON especificado acima, seguindo passo a p
 """
 
 
-INSIGHTS_GENERATOR_TEMPLATE  = """ 
-Segue abaixo o prompt refinado, ajustado ao contexto dos filmes da Pixar, mantendo o mesmo nível de detalhamento e estrutura, e utilizando técnicas avançadas de engenharia de prompt para garantir clareza, consistência e aderência à formatação solicitada:
+INSIGHTS_GENERATOR_TEMPLATE  = """
+Você é um analista de dados expert em filmes da Pixar.
+Sua tarefa é analisar os dados fornecidos e gerar insights relevantes.
+A resposta deve ser um objeto JSON válido com a chave "insights".
+Para garantir a formatação correta, a palavra "json" deve estar presente na resposta.
 
-------------------------------------------------------------
-
-Você é um analista de dados expert com vasta experiência em análise exploratória e geração de insights significativos para o setor cinematográfico, com foco especial em filmes da Pixar. Sua tarefa é analisar os dados fornecidos – oriundos da consulta SQL executada sobre o dataset dos filmes – e gerar insights relevantes baseados especificamente na pergunta do usuário e nos dados retornados.
-
-CONTEXTO DO BANCO DE DADOS:  
+CONTEXTO DO BANCO DE DADOS:
 {db_schema}
 
-DADOS DE ENTRADA:  
-Pergunta do usuário: {user_query}  
-Query SQL executada: {sql_query}  
+DADOS DE ENTRADA:
+Pergunta do usuário: {user_query}
+Query SQL executada: {sql_query}
 Dados retornados: {dataframe}
 
-INSTRUÇÕES DE ANÁLISE:
+INSTRUÇÕES:
 
-Se a chave 'data' não existir no dicionário de entrada ou o dataframe estiver vazio, retorne apenas:  
-"Não houveram insights interessantes para serem mostrados"
+1. Se os dados retornados estiverem vazios, responda:
+   {{"insights": "Não houveram insights interessantes para serem mostrados (json)"}}
 
-Caso contrário, você DEVE seguir EXATAMENTE o formato abaixo:
+2. Caso contrário, siga estas etapas:
+   a) Analise os dados e identifique os principais padrões e tendências.
+   b) Elabore um parágrafo conciso que resuma os insights mais relevantes, incluindo valores numéricos quando apropriado.
+   c) Formate a resposta como um objeto JSON com a chave "insights".
 
-------------------------------------------------------------
+Exemplo de resposta:
+{{"insights": "A análise revela que filmes com orçamentos maiores tendem a ter maior bilheteria.  Em média, filmes lançados nos últimos 5 anos arrecadaram 20% a mais do que os filmes mais antigos."}}
 
-Vamos analisar os dados dos filmes da Pixar passo a passo, conforme solicitado.
-
-1. **Compreensão**:  
-   - Qual é o objetivo principal da análise em relação aos filmes?  
-   - Quais variáveis estão sendo analisadas (ex.: Title, Release_Year, BoxOffice, Budget, CriticRating, Genre, Director etc.) e quais são seus tipos?  
-   - Quais padrões ou tendências seriam relevantes para esta análise?
-
-2. **Análise**:  
-   - Quais são os principais números e estatísticas encontrados (por exemplo, médias de BoxOffice, variações de Budget, contagens por Genre ou Director)?  
-   - Existem padrões ou tendências evidentes nos dados dos filmes?  
-   - Há valores atípicos ou casos especiais importantes (como filmes com bilheteria excepcionalmente alta ou baixa)?
-
-3. **Síntese**:  
-   - Como os dados respondem à pergunta original do usuário?  
-   - Quais são as descobertas mais significativas relacionadas aos filmes da Pixar?  
-   - Que relações importantes foram identificadas entre as variáveis analisadas?
-
-4. **Refinamento**:  
-   - Os insights são relevantes para a pergunta original?  
-   - As conclusões são suportadas pelos dados apresentados?  
-   - A explicação está clara e direta?
-
-**Insights**: [Aqui deve vir um parágrafo único e coeso resumindo as principais descobertas da análise, focando apenas no que é relevante para a pergunta do usuário sobre os filmes da Pixar. O texto deve ser claro, objetivo e baseado em evidências numéricas quando disponíveis.]
-
-------------------------------------------------------------
-
-REGRAS IMPORTANTES:  
-1. Mantenha EXATAMENTE a formatação mostrada acima, incluindo espaços e marcadores.  
-2. A seção **Insights** DEVE ser a última parte do texto.  
-3. O texto após "**Insights**:" DEVE ser um único parágrafo coeso.  
-4. Inclua valores numéricos específicos quando disponíveis.  
-5. Foque apenas em insights relacionados à pergunta do usuário sobre os filmes da Pixar.  
-6. Evite especulações além dos dados apresentados.
-
-Vamos analisar os dados passo-a-passo...
-
-------------------------------------------------------------
-
-Este prompt foi estruturado para fornecer uma orientação passo a passo que facilita a geração de respostas coerentes e fundamentadas, assegurando que cada etapa da análise seja contemplada e que a resposta final seja um parágrafo consolidado de insights.
+Responda usando o formato JSON especificado acima.
 """
