@@ -143,7 +143,6 @@ Caso uma query previamente gerada ({previous_query}) resulte em erro ao ser exec
    - Verifique se cada coluna mencionada na query anterior ({previous_query}) está no esquema da tabela.
       - Se alguma coluna não existir, substitua-a pela coluna correta antes de gerar a query.
    - Analise a mensagem de erro ({error_response}) para entender a causa do problema e evitar que ele se repita.
-   - Reconstrua uma nova query do zero, garantindo que todas as colunas, funções e filtros sejam válidos no PostgreSQL.
    - Responda apenas com uma query válida.
    
 EXEMPLOS:
@@ -251,6 +250,29 @@ Saída JSON esperada:
         "groupings": []
     }}}},
     "sql_query": "SELECT film, release_date FROM pixar_films ORDER BY release_date DESC;"
+}}}}
+
+Exemplo 5 - Pergunta Válida:
+Input: "Qual o filme mais antigo da pixar ?"
+Pensamento passo a passo:
+   - Campos: Title (para exibição), Release_Year (para identificar o mais antigo).
+   - Operação: Ordenação para identificar o mais antigo.
+   - Filtro: Nenhum filtro específico.
+   - Query SQL:
+       SELECT 
+         film, 
+         release_date 
+      FROM pixar_films 
+      ORDER BY release_date ASC LIMIT 1;
+Saída JSON esperada:
+{{{{
+    "analysis": {{{{
+         "fields": ["film", "release_date"],
+         "operations": ["SELECT", "ORDER BY ASC", "LIMIT"],
+         "filters": [],
+         "groupings": []
+      }}}},
+      "sql_query": "SELECT film, release_date FROM pixar_films ORDER BY release_date ASC LIMIT 1;"
 }}}}
 
 FORMATO DA RESPOSTA:
