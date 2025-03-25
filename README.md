@@ -1,5 +1,6 @@
 # Agent LLM para o Maven Pixar Challenge
-![pergunta_to_query](https://github.com/user-attachments/assets/2deebf68-39f8-48bb-99ce-ee11db08a74f)
+![diagrama_uml_llm_agent_pixar](https://github.com/user-attachments/assets/280b5403-8861-4792-9b61-598e46820de9)
+
 # Agent LLM para o Maven Pixar Challenge
 
 Este projeto implementa um **agente LLM** que recebe perguntas em linguagem natural sobre filmes da Pixar, converte essas perguntas em queries SQL, executa as queries num banco de dados local (utilizando DuckDB) e gera insights a partir dos resultados.
